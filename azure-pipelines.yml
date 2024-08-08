@@ -23,9 +23,6 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-      - task: DownloadSecureFile@1
-        inputs:
-          secureFile: '.env'
           
       - task: CopyFiles@2
         inputs:
