@@ -1,0 +1,84 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- main
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  branchName: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+    - job: Build
+      displayName: 'Build Job'
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: '.env'
+          
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: $(Agent.TempDirectory)
+          Contents: '.env'
+          TargetFolder: '$(System.DefaultWorkingDirectory)'
+          
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '18.x'
+        displayName: 'Install Node.js'
+        
+      - script: |
+          npm install
+          npm run build
+        displayName: 'npm install and build'
+        
+      - script: |
+          echo "Listing directory contents:"
+          ls -R $(Build.SourcesDirectory)
+        displayName: 'List directory contents'
+      
+      # Check if '.next' directory exists after build
+      - script: |
+          echo "Checking if '.next' directory exists:"
+          if [ -d "$(Build.SourcesDirectory)/.next" ]; then
+            echo "'.next' directory exists."
+            ls -R $(Build.SourcesDirectory)/.next
+          else
+            echo "'.next' directory does not exist."
+          fi
+        displayName: 'Check and List contents of the .next directory'
+ 
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '.next'
+          Contents: '**/*'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+          CleanTargetFolder: true
+
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          # PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          TargetPath: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
+
+      - script: |
+          echo "Listing contents of the Artifact Staging Directory:"
+          ls -R $(Build.ArtifactStagingDirectory)
+        displayName: 'List contents of the Artifact Staging Directory'
+  
+      - script: |
+          echo "Branch Name: $(branchName)"
+        displayName: 'Print branch name'
