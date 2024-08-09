@@ -92,7 +92,7 @@ stages:
     - checkout: none
     - download: none
     
-    - task: DownloadPipelineArtifact@2
+    - task: DownloadPipelineArtifact@2 
       inputs:
         # buildType: 'current'
         artifactName: 'drop'
