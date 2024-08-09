@@ -107,7 +107,7 @@ stages:
 
     - task: AzureStaticWebApp@0
       inputs:
-        app_location: '/'
+        app_location: '.next'
         api_location: ''
         output_location: 'out'
         skip_app_build: true
