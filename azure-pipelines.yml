@@ -79,3 +79,40 @@ stages:
       - script: |
           echo "Branch Name: $(branchName)"
         displayName: 'Print branch name' 
+
+- stage: Production
+  displayName: 'Deploy to production'
+  dependsOn: Build
+  condition: and(succeeded('Build'), eq(variables['branchName'], 'main'))
+  jobs:
+  - job: DeployStaticWebsite
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: none
+    - download: none
+    
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        # buildType: 'current'
+        artifactName: 'drop'
+        # targetPath: '$(Pipeline.Workspace)'
+      displayName: 'Download artifacts'
+
+    - script: |
+       pwd 
+       echo "Listing all directories within the Pipeline.Workspace:"
+       find $(Pipeline.Workspace) -type d
+      displayName: 'List all directories within the Pipeline.Workspace'
+
+    - task: AzureStaticWebApp@0
+      inputs:
+        app_location: '/'
+        api_location: ''
+        output_location: 'out'
+        skip_app_build: true
+        skip_api_build: true
+        workingDirectory: '$(Pipeline.Workspace)'
+        azure_static_web_apps_api_token: '3c284c53d0684ff7ea98bc51a9c15a777cfb3b530d0432e8bd46f5e829a2eb3d5-fc93e989-5225-4d04-9499-f75ff1fd5361010500815'
+        
+
