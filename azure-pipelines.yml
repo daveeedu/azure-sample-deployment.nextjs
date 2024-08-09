@@ -78,4 +78,4 @@ stages:
   
       - script: |
           echo "Branch Name: $(branchName)"
-        displayName: 'Print branch name'
+        displayName: 'Print branch name' 
