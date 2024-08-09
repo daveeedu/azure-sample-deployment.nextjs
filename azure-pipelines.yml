@@ -59,7 +59,7 @@ stages:
       - task: CopyFiles@2
         inputs:
           SourceFolder: '.next'
-          Contents: '**/*'
+          Contents: '**'
           TargetFolder: '$(Build.ArtifactStagingDirectory)'
           CleanTargetFolder: true
 
@@ -107,7 +107,7 @@ stages:
 
     - task: AzureStaticWebApp@0
       inputs:
-        app_location: '.next'
+        app_location: '/'
         api_location: ''
         output_location: 'out'
         skip_app_build: true
