@@ -1,0 +1,8 @@
+{
+  "SubscriptionId": "13202d6f-6a9d-4ef3-b0a8-f6e322638889",
+  "ResourceGroupName": "DaveTest",
+  "StorageAccountName": "DaveTeststorage",
+  "OrgUrl": "https://dev.azure.com/daveeedu",
+  "ProjectName": "azure-deployment-test",
+  "Location": "Global"
+}
